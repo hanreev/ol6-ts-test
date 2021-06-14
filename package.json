@@ -1,0 +1,40 @@
+{
+  "name": "ol6",
+  "version": "1.0.0",
+  "description": "OpenLayers 6",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "webpack --progress --color",
+    "dev": "yarn build --mode=development",
+    "watch": "yarn dev --watch",
+    "serve": "webpack serve --progress --color --mode=development --hot"
+  },
+  "dependencies": {
+    "ol": "^6.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.2",
+    "@types/ol": "^6.5.1",
+    "@types/webpack": "^5.28.0",
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
+    "autoprefixer": "^10.2.6",
+    "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "^5.2.6",
+    "cssnano": "^5.0.6",
+    "eslint": "^7.28.0",
+    "mini-css-extract-plugin": "^1.6.0",
+    "no-emit-webpack-plugin": "^4.0.1",
+    "postcss": "^8.3.3",
+    "postcss-loader": "^6.1.0",
+    "prettier": "^2.3.1",
+    "sass": "^1.34.1",
+    "sass-loader": "^12.1.0",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

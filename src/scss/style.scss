@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
+@import '~ol/ol.css';
+
+body {
+  font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.map {
+  flex: 1 1 auto;
+  display: block;
+}
+
+// OpenLayers controls
+.ol-mouse-position {
+  top: unset;
+  bottom: 30px;
+  background: #ffffff;
+  padding: 2px 4px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.ol-rotate {
+  top: 40px;
+}
+
+.ol-scale-line {
+  left: 170px;
+}
+
+.ol-layer-list {
+  top: 5em;
+  left: 0.5em;
+  padding: 5px;
+  background: #ffffff;
+
+  &:hover {
+    background: #ffffff;
+  }
+
+  > ul {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+  }
+}
