@@ -1,0 +1,16 @@
+*.eot
+*.otf
+*.ttf
+*.woff
+*.woff2
+
+*.jpg
+*.jpeg
+*.png
+*.svg
+*.ico
+
+src/assets/**/*
+
+.DS_Store
+.gitkeep
