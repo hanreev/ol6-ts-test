@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 
 const TerserPlugin = require('terser-webpack-plugin');
@@ -40,7 +39,7 @@ module.exports = (env, argv) => {
       }),
     );
 
-  /** @type {import('webpack').Loader} */
+  /** @type {import('webpack').RuleSetRule} */
   const postcssLoader = {
     loader: 'postcss-loader',
     options: { postcssOptions },
@@ -49,11 +48,10 @@ module.exports = (env, argv) => {
   return {
     entry: {
       main: './src/ts/main.ts',
-      style: './src/scss/style.scss',
     },
     output: {
       path: destPath,
-      filename: 'js/[name].js',
+      filename: 'assets/[name].js',
     },
     target: 'web',
     mode,
@@ -98,9 +96,9 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: 'css/[name].css',
+        filename: 'assets/[name].css',
       }),
-      new NoEmitPlugin(['js/style.js']),
+      // new NoEmitPlugin(['js/style.js']),
       new CopyPlugin({
         patterns: [
           { from: 'src/index.html', to: 'index.html' },
@@ -111,6 +109,7 @@ module.exports = (env, argv) => {
     devServer: {
       contentBase: destPath,
       port: 9000,
+      compress: true,
     },
   };
 };

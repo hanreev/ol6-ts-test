@@ -16,9 +16,16 @@ body {
 }
 
 // OpenLayers controls
+.ol-zoom {
+  top: unset;
+  right: 0.5em;
+  bottom: 4em;
+  left: unset;
+}
+
 .ol-mouse-position {
   top: unset;
-  bottom: 30px;
+  bottom: 2em;
   background: #ffffff;
   padding: 2px 4px;
   font-size: 14px;
@@ -26,15 +33,15 @@ body {
 }
 
 .ol-rotate {
-  top: 40px;
+  top: 5em;
 }
 
 .ol-scale-line {
-  left: 170px;
+  left: 11em;
 }
 
 .ol-layer-list {
-  top: 5em;
+  top: 0.5em;
   left: 0.5em;
   padding: 5px;
   background: #ffffff;
@@ -47,5 +54,17 @@ body {
     margin: 0;
     list-style: none;
     padding: 0;
+  }
+}
+
+.ol-download {
+  right: 0.5em;
+  top: 2.5em;
+}
+
+.ol-overviewmap {
+  &.ol-overviewmap.ol-uncollapsible {
+    left: 0.5em;
+    bottom: 0.5em;
   }
 }

@@ -1,9 +1,19 @@
-import { Graticule, Map, View } from 'ol';
+import '../scss/style.scss';
+
+import { Feature, Graticule, Map, View } from 'ol';
 import { FullScreen, MousePosition, OverviewMap, Rotate, ScaleLine, defaults as defaultControls } from 'ol/control';
 import { toStringXY } from 'ol/coordinate';
-import { Layer, Tile as TileLayer } from 'ol/layer';
+import Point from 'ol/geom/Point';
+import { Layer, Tile as TileLayer, Vector } from 'ol/layer';
+import { fromLonLat } from 'ol/proj';
+import RenderEvent from 'ol/render/Event';
 import { OSM, XYZ } from 'ol/source';
+import VectorSource from 'ol/source/Vector';
+import { Circle, Fill, Stroke, Style } from 'ol/style';
+import { fromEvent } from 'rxjs';
+import { take } from 'rxjs/operators';
 
+import { Download } from './controls/Download';
 import LayerList from './controls/LayerList';
 
 const gmapLayerCodes = {
@@ -28,9 +38,8 @@ for (const layerType in gmapLayerCodes) {
 }
 
 const view = new View({
-  center: [110.36, -7.8],
-  zoom: 14,
-  projection: 'EPSG:4326',
+  center: fromLonLat([110.367, -7.7829]),
+  zoom: 12,
 });
 
 const graticule = new Graticule({
@@ -63,6 +72,7 @@ const map = new Map({
     new FullScreen(),
     new MousePosition({
       coordinateFormat: coord => toStringXY(coord, 6),
+      projection: 'EPSG:4326',
     }),
     new ScaleLine(),
     new Rotate(),
@@ -71,7 +81,41 @@ const map = new Map({
       collapsible: false,
     }),
     new LayerList(),
+    new Download(),
   ]),
 });
 
 (window as any).map = map;
+
+fromEvent<RenderEvent>(map, 'rendercomplete')
+  .pipe(take(1))
+  .subscribe(e => {
+    console.log(e);
+  });
+
+const vectorSource = new VectorSource();
+const vectorLayer = new Vector({
+  source: vectorSource,
+  style: new Style({
+    image: new Circle({
+      radius: 6,
+      fill: new Fill({ color: '#ffaa00' }),
+      stroke: new Stroke({ color: '#ffaa00', width: 2 }),
+    }),
+  }),
+});
+map.addLayer(vectorLayer);
+const feature = new Feature({
+  name: 'JOG',
+});
+feature.setGeometry(new Point(view.getCenter()));
+vectorSource.addFeature(feature);
+map.on('click', e => {
+  map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+    alert(feature.get('name'));
+  });
+
+  map.forEachLayerAtPixel(e.pixel, layer => {
+    if (layer.get('basemap')) console.log(layer.get('name'));
+  });
+});
