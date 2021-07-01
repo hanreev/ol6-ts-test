@@ -1,7 +1,7 @@
 {
-  "name": "ol6",
+  "name": "ol6-ts-test",
   "version": "1.0.0",
-  "description": "OpenLayers 6",
+  "description": "OpenLayers 6 TypeScript Test",
   "license": "MIT",
   "private": true,
   "scripts": {
