@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto');
+@import url('https://fonts.googleapis.com/css2?family=Material+Icons');
+
 @import '~ol/ol.css';
 
 body {
@@ -10,6 +12,10 @@ body {
   overflow: hidden;
 }
 
+.material-icons {
+  font-size: 1rem;
+}
+
 .map {
   flex: 1 1 auto;
   display: block;
@@ -18,14 +24,14 @@ body {
 // OpenLayers controls
 .ol-zoom {
   top: unset;
-  right: 0.5em;
-  bottom: 4em;
+  right: 0.5rem;
+  bottom: 4rem;
   left: unset;
 }
 
 .ol-mouse-position {
   top: unset;
-  bottom: 2em;
+  bottom: 2rem;
   background: #ffffff;
   padding: 2px 4px;
   font-size: 14px;
@@ -33,21 +39,25 @@ body {
 }
 
 .ol-rotate {
-  top: 5em;
+  top: 5rem;
 }
 
 .ol-scale-line {
-  left: 11em;
+  left: 11rem;
 }
 
 .ol-layer-list {
-  top: 0.5em;
-  left: 0.5em;
-  padding: 5px;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.5rem;
   background: #ffffff;
 
   &:hover {
     background: #ffffff;
+  }
+
+  > h3 {
+    margin: 0.5rem 0 1rem;
   }
 
   > ul {
@@ -58,13 +68,13 @@ body {
 }
 
 .ol-download {
-  right: 0.5em;
-  top: 2.5em;
+  right: 0.5rem;
+  top: 2.5rem;
 }
 
 .ol-overviewmap {
   &.ol-overviewmap.ol-uncollapsible {
-    left: 0.5em;
-    bottom: 0.5em;
+    left: 0.5rem;
+    bottom: 0.5rem;
   }
 }

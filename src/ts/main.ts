@@ -1,40 +1,28 @@
 import '../scss/style.scss';
 
 import { Feature, Graticule, Map, View } from 'ol';
-import { FullScreen, MousePosition, OverviewMap, Rotate, ScaleLine, defaults as defaultControls } from 'ol/control';
+import {
+  FullScreen,
+  MousePosition,
+  OverviewMap,
+  ScaleLine,
+  defaults as defaultControls,
+} from 'ol/control';
 import { toStringXY } from 'ol/coordinate';
 import Point from 'ol/geom/Point';
 import { Layer, Tile as TileLayer, Vector } from 'ol/layer';
 import { fromLonLat } from 'ol/proj';
-import RenderEvent from 'ol/render/Event';
-import { OSM, XYZ } from 'ol/source';
+import { OSM } from 'ol/source';
 import VectorSource from 'ol/source/Vector';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
-import { fromEvent } from 'rxjs';
-import { take } from 'rxjs/operators';
 
-import { Download } from './controls/Download';
-import LayerList from './controls/LayerList';
+import { Download } from './control/Download';
+import LayerList from './control/LayerList';
+import Mapbox, { MapboxType } from './source/Mapbox';
+import { createElement } from './util';
 
-const gmapLayerCodes = {
-  Road: 'm',
-  Terrain: 'p',
-  Satellite: 's',
-  Hybrid: 'y',
-};
-
-const gmapLayerSources: { [key in keyof typeof gmapLayerCodes]?: XYZ } = {};
-
-for (const layerType in gmapLayerCodes) {
-  const layerCode = gmapLayerCodes[layerType];
-  const source = new XYZ({
-    url: `https://mt{0-3}.google.com/vt/?lyrs=${layerCode}&x={x}&y={y}&z={z}&hl=id`,
-    attributions: 'Google Maps',
-    crossOrigin: 'anonymous',
-    maxZoom: 21,
-  });
-  source.set('name', `Google Maps ${layerType}`);
-  gmapLayerSources[layerType] = source;
+function createIcon(iconName: string) {
+  return createElement('i', { className: 'material-icons', innerText: iconName });
 }
 
 const view = new View({
@@ -50,17 +38,24 @@ const graticule = new Graticule({
   zIndex: Infinity,
 });
 
-const osmLayer = new TileLayer({ source: new OSM(), zIndex: 0, visible: false });
-osmLayer.set('basemap', true);
-osmLayer.set('name', 'OpenStreetMap');
+const osmLayer = new TileLayer({
+  name: 'OpenSteetMap',
+  basemap: true,
+  source: new OSM(),
+  zIndex: 0,
+});
 
 const layers: Layer[] = [graticule, osmLayer];
 
-for (const layerType in gmapLayerSources) {
-  const source = gmapLayerSources[layerType];
-  const layer = new TileLayer({ source, zIndex: 0, visible: layerType === 'Road' });
-  layer.set('name', `Google Maps ${layerType}`);
-  layer.set('basemap', true);
+for (const key in MapboxType) {
+  const type = MapboxType[key] as MapboxType;
+  const layer = new TileLayer({
+    name: `Mapbox ${key.replace('_', ' ')}`,
+    basemap: true,
+    source: new Mapbox({ type }),
+    zIndex: 0,
+    visible: false,
+  });
   layers.push(layer);
 }
 
@@ -68,16 +63,27 @@ const map = new Map({
   target: 'map',
   view,
   layers,
-  controls: defaultControls({ attributionOptions: { collapsible: false } }).extend([
-    new FullScreen(),
+  controls: defaultControls({
+    attributionOptions: { collapsible: false },
+    rotateOptions: {
+      label: createIcon('navigation'),
+    },
+    zoomOptions: {
+      zoomInLabel: createIcon('add'),
+      zoomOutLabel: createIcon('remove'),
+    },
+  }).extend([
+    new FullScreen({
+      label: createIcon('open_in_full'),
+      labelActive: createIcon('close_fullscreen'),
+    }),
     new MousePosition({
-      coordinateFormat: coord => toStringXY(coord, 6),
+      coordinateFormat: coord => toStringXY(coord, 8),
       projection: 'EPSG:4326',
     }),
     new ScaleLine(),
-    new Rotate(),
     new OverviewMap({
-      layers: [new TileLayer({ source: gmapLayerSources.Road })],
+      layers: [new TileLayer({ source: new OSM() })],
       collapsible: false,
     }),
     new LayerList(),
@@ -86,12 +92,6 @@ const map = new Map({
 });
 
 (window as any).map = map;
-
-fromEvent<RenderEvent>(map, 'rendercomplete')
-  .pipe(take(1))
-  .subscribe(e => {
-    console.log(e);
-  });
 
 const vectorSource = new VectorSource();
 const vectorLayer = new Vector({
@@ -105,13 +105,15 @@ const vectorLayer = new Vector({
   }),
 });
 map.addLayer(vectorLayer);
-const feature = new Feature({
-  name: 'JOG',
+
+const feature = new Feature<Point>({
+  name: 'Feature 1',
 });
 feature.setGeometry(new Point(view.getCenter()));
 vectorSource.addFeature(feature);
+
 map.on('click', e => {
-  map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+  map.forEachFeatureAtPixel(e.pixel, feature => {
     alert(feature.get('name'));
   });
 

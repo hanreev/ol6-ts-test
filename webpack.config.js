@@ -1,8 +1,9 @@
 const path = require('path');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
 
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const NoEmitPlugin = require('no-emit-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const autoprefixer = require('autoprefixer');
@@ -10,11 +11,15 @@ const cssnano = require('cssnano');
 
 const destPath = path.resolve('./dist');
 
+const envGlobal = dotenv.config({ path: path.join(__dirname, '.env') });
+const envLocal = dotenv.config({ path: path.join(__dirname, '.env.local') });
+const appEnv = Object.assign({}, envGlobal.parsed, envLocal.parsed);
+
 /**
  * @function
  * @param {Object<string, *>|undefined} env
  * @param {Object<string, *>} argv
- * @returns {import('webpack').Configuration}
+ * @returns {webpack.Configuration}
  */
 module.exports = (env, argv) => {
   /** @type {'development'|'production'|'none'} */
@@ -27,7 +32,7 @@ module.exports = (env, argv) => {
     plugins: [autoprefixer],
   };
 
-  if (mode == 'production')
+  if (mode === 'production')
     postcssOptions.plugins.push(
       cssnano({
         preset: [
@@ -39,7 +44,7 @@ module.exports = (env, argv) => {
       }),
     );
 
-  /** @type {import('webpack').RuleSetRule} */
+  /** @type {webpack.RuleSetRule} */
   const postcssLoader = {
     loader: 'postcss-loader',
     options: { postcssOptions },
@@ -63,6 +68,7 @@ module.exports = (env, argv) => {
       entrypoints: false,
       modules: false,
     },
+    devtool: false,
     resolve: {
       extensions: ['.js', '.ts', '.scss', '.sass'],
     },
@@ -104,6 +110,10 @@ module.exports = (env, argv) => {
           { from: 'src/index.html', to: 'index.html' },
           // { from: 'src/assets', to: 'assets' },
         ],
+      }),
+      new webpack.SourceMapDevToolPlugin(),
+      new webpack.DefinePlugin({
+        'process.env': JSON.stringify(appEnv),
       }),
     ],
     devServer: {

@@ -11,12 +11,12 @@
     "serve": "webpack serve --progress --color --mode=development --hot"
   },
   "dependencies": {
-    "ol": "^6.5.0",
-    "rxjs": "^7.1.0"
+    "ol": "^6.5.0"
   },
   "devDependencies": {
+    "@hanreev/types-ol": "^3.5.3",
     "@types/node": "14.0.0",
-    "@types/ol": "^6.5.2",
+    "@types/ol": "file:node_modules/@hanreev/types-ol/ol",
     "@types/webpack": "^5.28.0",
     "@types/webpack-dev-server": "^3.11.4",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
@@ -25,10 +25,10 @@
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^5.2.6",
     "cssnano": "^5.0.6",
+    "dotenv": "^10.0.0",
     "eslint": "^7.29.0",
     "husky": "^6.0.0",
     "mini-css-extract-plugin": "^2.0.0",
-    "no-emit-webpack-plugin": "^4.0.1",
     "postcss": "^8.3.5",
     "postcss-loader": "^6.1.0",
     "prettier": "^2.3.2",

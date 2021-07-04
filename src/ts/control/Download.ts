@@ -7,7 +7,7 @@ export class Download extends Control {
     this.element.className = 'ol-control ol-unselectable ol-download';
     const button = document.createElement('button');
     button.title = 'Download';
-    button.textContent = '▼';
+    button.innerHTML = '<i class="material-icons">cloud_download</i>';
     button.addEventListener('click', () => {
       const map = this.getMap();
       if (!map) return;
@@ -17,7 +17,9 @@ export class Download extends Control {
         const dlContext = dlCanvas.getContext('2d');
         dlCanvas.width = size[0];
         dlCanvas.height = size[1];
-        const canvasEls = map.getTargetElement().querySelectorAll<HTMLCanvasElement>('.ol-layers canvas');
+        const canvasEls = map
+          .getTargetElement()
+          .querySelectorAll<HTMLCanvasElement>('.ol-layers canvas');
         canvasEls.forEach(canvas => {
           if (canvas.width <= 0) return;
           const opacity = canvas.parentElement.style.opacity;

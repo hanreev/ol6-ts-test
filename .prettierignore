@@ -11,6 +11,7 @@
 *.ico
 
 src/assets/**/*
+dist/**/*
 
 .DS_Store
 .gitkeep

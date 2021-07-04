@@ -5,13 +5,22 @@ import Control, { Options as BaseOptions } from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import BaseLayer from 'ol/layer/Base';
 
+import { createElement } from '../util';
+
 export interface Options extends BaseOptions {
+  title?: string | HTMLElement;
   className?: string;
 }
 
+const defaultTitle = 'Layer List';
+
 export class LayerList extends Control {
   container: HTMLElement;
+  private _titleEl: HTMLElement;
   private _eventKeys: { [key: string]: EventsKey | EventsKey[] } = {};
+  private get _layers() {
+    return this.getMap()?.getLayers().getArray() || [];
+  }
 
   constructor(options: Options = {}) {
     super({
@@ -22,7 +31,10 @@ export class LayerList extends Control {
     const className = options.className || 'ol-layer-list';
     this.element.classList.add(className);
     this.container = document.createElement('ul');
+    this._titleEl = createElement('h3');
+    this.element.append(this._titleEl);
     this.element.append(this.container);
+    this.setTitle(options.title || defaultTitle);
   }
 
   setMap(map?: PluggableMap) {
@@ -34,24 +46,35 @@ export class LayerList extends Control {
       this._eventKeys = {};
     }
 
-    if (map) {
-      map
-        .getLayers()
-        .getArray()
-        .filter(layer => !!layer.get('name'))
-        .sort((a, b) => {
-          const aZ = a.getZIndex() || 0;
-          const bZ = b.getZIndex() || 0;
-          return aZ > bZ ? 1 : aZ < bZ ? -1 : 0;
-        })
-        .forEach(this._addLayer.bind(this));
+    if (!map) return;
 
-      const uid = getUid(this);
-      this._eventKeys[uid] = map.getLayers().on(['add', 'remove'], (e: CollectionEvent<BaseLayer>) => {
+    this._layers
+      .filter(layer => !!layer.get('name'))
+      .sort((a, b) => {
+        const aZ = a.getZIndex() || 0;
+        const bZ = b.getZIndex() || 0;
+        return aZ > bZ ? 1 : aZ < bZ ? -1 : 0;
+      })
+      .forEach(this._addLayer.bind(this));
+
+    const uid = getUid(this);
+    this._eventKeys[uid] = map
+      .getLayers()
+      .on(['add', 'remove'], (e: CollectionEvent<BaseLayer>) => {
         if (e.type === 'add') this._addLayer(e.element);
         else this._removeLayer(e.element);
       });
-    }
+  }
+
+  setTitle(title: string | HTMLElement) {
+    this.set('title', title);
+    const titleEl = typeof title === 'string' ? createElement('h3', { innerText: title }) : title;
+    this._titleEl.replaceWith(titleEl);
+    this._titleEl = titleEl;
+  }
+
+  getTitle(): string | HTMLElement {
+    return this.get('title') || defaultTitle;
   }
 
   private _addLayer(layer: BaseLayer) {
@@ -65,6 +88,10 @@ export class LayerList extends Control {
     liEl.append(cbxEl, layer.get('name'));
     this.container.append(liEl);
     cbxEl.addEventListener('change', () => {
+      if (layer.get('basemap'))
+        this._layers
+          .filter(l => l !== layer && !!l.get('basemap'))
+          .forEach(l => l.setVisible(false));
       layer.setVisible(cbxEl.checked);
     });
     this._eventKeys[uid] = layer.on(['change:visible', 'change:zIndex'], e => {
