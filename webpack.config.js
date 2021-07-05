@@ -23,9 +23,8 @@ const appEnv = Object.assign({}, envGlobal.parsed, envLocal.parsed);
  */
 module.exports = (env, argv) => {
   /** @type {'development'|'production'|'none'} */
-  let mode = 'production';
-
-  if ((env && env.development) || argv.mode == 'development') mode = 'development';
+  const mode =
+    (env && env.development) || argv.mode == 'development' ? 'development' : 'production';
 
   /** @type {Object<string, *>} */
   const postcssOptions = {
@@ -70,7 +69,7 @@ module.exports = (env, argv) => {
     },
     devtool: false,
     resolve: {
-      extensions: ['.js', '.ts', '.scss', '.sass'],
+      extensions: ['.js', '.ts', '.scss'],
     },
     optimization: {
       minimizer: [
@@ -85,6 +84,10 @@ module.exports = (env, argv) => {
     },
     module: {
       rules: [
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader],
+        },
         {
           test: /\.s[ac]ss$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, 'sass-loader'],
@@ -104,7 +107,6 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: 'assets/[name].css',
       }),
-      // new NoEmitPlugin(['js/style.js']),
       new CopyPlugin({
         patterns: [
           { from: 'src/index.html', to: 'index.html' },

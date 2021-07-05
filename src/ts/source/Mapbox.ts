@@ -16,9 +16,9 @@ export interface Options extends BaseOptions {
 }
 
 export const MAPBOX_ATTRIBUTION =
-  '<a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>';
+  '© <a href="https://www.mapbox.com/about/maps/" target="_blank">Mapbox</a>';
 export const OSM_ATTRIBUTION =
-  '<a href="http://www.openstreetmap.org/about/" target="_blank">© OpenStreetMap</a>';
+  '© <a href="http://www.openstreetmap.org/about/" target="_blank">OpenStreetMap</a>';
 
 const API_TOKEN = process.env.MAPBOX_API_TOKEN;
 const defaultOptions: Options = {

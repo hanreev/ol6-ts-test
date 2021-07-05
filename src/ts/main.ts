@@ -31,6 +31,7 @@ const view = new View({
 });
 
 const graticule = new Graticule({
+  name: 'Graticule',
   targetSize: 200,
   showLabels: true,
   lonLabelPosition: 0.96,
@@ -64,7 +65,11 @@ const map = new Map({
   view,
   layers,
   controls: defaultControls({
-    attributionOptions: { collapsible: false },
+    attributionOptions: {
+      collapsed: false,
+      label: createIcon('info'),
+      collapseLabel: createIcon('chevron_right'),
+    },
     rotateOptions: {
       label: createIcon('navigation'),
     },
@@ -76,6 +81,7 @@ const map = new Map({
     new FullScreen({
       label: createIcon('open_in_full'),
       labelActive: createIcon('close_fullscreen'),
+      source: document.body,
     }),
     new MousePosition({
       coordinateFormat: coord => toStringXY(coord, 8),
@@ -84,7 +90,9 @@ const map = new Map({
     new ScaleLine(),
     new OverviewMap({
       layers: [new TileLayer({ source: new OSM() })],
-      collapsible: false,
+      collapsed: false,
+      label: createIcon('chevron_right'),
+      collapseLabel: createIcon('chevron_left'),
     }),
     new LayerList(),
     new Download(),

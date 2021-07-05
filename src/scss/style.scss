@@ -25,13 +25,13 @@ body {
 .ol-zoom {
   top: unset;
   right: 0.5rem;
-  bottom: 4rem;
+  bottom: 5rem;
   left: unset;
 }
 
 .ol-mouse-position {
   top: unset;
-  bottom: 2rem;
+  bottom: 3rem;
   background: #ffffff;
   padding: 2px 4px;
   font-size: 14px;
@@ -56,6 +56,17 @@ body {
     background: #ffffff;
   }
 
+  &.ol-collapsed > button {
+    left: 0;
+    right: unset;
+  }
+
+  > button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
   > h3 {
     margin: 0.5rem 0 1rem;
   }
@@ -76,5 +87,10 @@ body {
   &.ol-overviewmap.ol-uncollapsible {
     left: 0.5rem;
     bottom: 0.5rem;
+  }
+
+  &:not(.ol-collapsed) button {
+    left: 2px;
+    bottom: 2px;
   }
 }

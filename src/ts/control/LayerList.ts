@@ -5,36 +5,61 @@ import Control, { Options as BaseOptions } from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import BaseLayer from 'ol/layer/Base';
 
-import { createElement } from '../util';
+import { createElement, sortByZIndex } from '../util';
 
 export interface Options extends BaseOptions {
   title?: string | HTMLElement;
   className?: string;
+  collapsible?: boolean;
+  collapsed?: boolean;
+  label?: string | HTMLElement;
+  collapseLabel?: string | HTMLElement;
 }
 
 const defaultTitle = 'Layer List';
 
+const defaultOptions: Options = {
+  title: defaultTitle,
+  className: 'ol-layer-list',
+  collapsible: true,
+  collapsed: true,
+  label: createElement('i', { className: 'material-icons', innerText: 'layers' }),
+  collapseLabel: createElement('i', { className: 'material-icons', innerText: 'chevron_left' }),
+};
+
 export class LayerList extends Control {
   container: HTMLElement;
+  private _toggleEl: HTMLButtonElement;
   private _titleEl: HTMLElement;
-  private _eventKeys: { [key: string]: EventsKey | EventsKey[] } = {};
+  private _eventKeys: { [key: string]: EventsKey | EventsKey[] };
+  private _options: Options;
+
   private get _layers() {
     return this.getMap()?.getLayers().getArray() || [];
   }
 
   constructor(options: Options = {}) {
-    super({
-      element: options.element || document.createElement('div'),
-      target: options.target,
-    });
-    this.element.className = 'ol-control';
-    const className = options.className || 'ol-layer-list';
-    this.element.classList.add(className);
-    this.container = document.createElement('ul');
+    options = Object.assign({}, defaultOptions, options);
+    options.element = options.element || createElement('div');
+    if (!options.collapsible) options.collapsed = false;
+    super(options);
+    this._options = options;
+    this.container = createElement('ul');
+    this._toggleEl = createElement('button');
     this._titleEl = createElement('h3');
+    this._eventKeys = {};
+
+    this.element.className = 'ol-control';
+    this.element.classList.add(options.className);
+    this._toggleEl.addEventListener('click', () => {
+      this.setCollapsed(!this.getCollapsed());
+    });
+    if (options.collapsible) this.element.append(this._toggleEl);
+    else this.element.classList.add('ol-uncollapsible');
     this.element.append(this._titleEl);
     this.element.append(this.container);
     this.setTitle(options.title || defaultTitle);
+    this.setCollapsed(options.collapsed);
   }
 
   setMap(map?: PluggableMap) {
@@ -50,11 +75,7 @@ export class LayerList extends Control {
 
     this._layers
       .filter(layer => !!layer.get('name'))
-      .sort((a, b) => {
-        const aZ = a.getZIndex() || 0;
-        const bZ = b.getZIndex() || 0;
-        return aZ > bZ ? 1 : aZ < bZ ? -1 : 0;
-      })
+      .sort(sortByZIndex)
       .forEach(this._addLayer.bind(this));
 
     const uid = getUid(this);
@@ -71,10 +92,25 @@ export class LayerList extends Control {
     const titleEl = typeof title === 'string' ? createElement('h3', { innerText: title }) : title;
     this._titleEl.replaceWith(titleEl);
     this._titleEl = titleEl;
+    this._toggleEl.title = typeof title === 'string' ? title : title.textContent;
   }
 
   getTitle(): string | HTMLElement {
     return this.get('title') || defaultTitle;
+  }
+
+  setCollapsed(collapsed: boolean) {
+    this.set('collapsed', collapsed);
+    const display = collapsed ? 'none' : 'block';
+    this._titleEl.style.display = display;
+    this.container.style.display = display;
+    this._toggleEl.innerHTML = '';
+    this._toggleEl.append(collapsed ? this._options.label : this._options.collapseLabel);
+    this.element.classList.toggle('ol-collapsed', collapsed);
+  }
+
+  getCollapsed() {
+    return !!this.get('collapsed');
   }
 
   private _addLayer(layer: BaseLayer) {
