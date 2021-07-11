@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@hanreev/types-ol": "^3.5.3",
-    "@types/node": "14.0.0",
+    "@types/node": "^14.0.0",
     "@types/ol": "file:node_modules/@hanreev/types-ol/ol",
     "@types/webpack": "^5.28.0",
     "@types/webpack-dev-server": "^3.11.4",
@@ -27,7 +27,7 @@
     "cssnano": "^5.0.6",
     "dotenv": "^10.0.0",
     "eslint": "^7.29.0",
-    "husky": "^6.0.0",
+    "husky": "^7.0.1",
     "mini-css-extract-plugin": "^2.0.0",
     "postcss": "^8.3.5",
     "postcss-loader": "^6.1.0",
