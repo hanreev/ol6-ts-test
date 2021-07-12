@@ -20,7 +20,7 @@ export const MAPBOX_ATTRIBUTION =
 export const OSM_ATTRIBUTION =
   '© <a href="http://www.openstreetmap.org/about/" target="_blank">OpenStreetMap</a>';
 
-const API_TOKEN = process.env.MAPBOX_API_TOKEN;
+const ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 const defaultOptions: Options = {
   attributions: [MAPBOX_ATTRIBUTION, OSM_ATTRIBUTION],
   crossOrigin: 'anonymous',
@@ -38,7 +38,7 @@ export default class Mapbox extends XYZ {
   setType(type: MapboxType) {
     this.set('type', type);
     this.setUrl(
-      `https://api.mapbox.com/styles/v1/mapbox/${type}/tiles/512/{z}/{x}/{y}?access_token=${API_TOKEN}`,
+      `https://api.mapbox.com/styles/v1/mapbox/${type}/tiles/512/{z}/{x}/{y}?access_token=${ACCESS_TOKEN}`,
     );
     const attributions =
       type === MapboxType.Satellite ? MAPBOX_ATTRIBUTION : [MAPBOX_ATTRIBUTION, OSM_ATTRIBUTION];

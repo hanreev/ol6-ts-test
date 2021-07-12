@@ -114,14 +114,17 @@ export class LayerList extends Control {
   }
 
   private _addLayer(layer: BaseLayer) {
-    if (!layer.get('name')) return;
     const uid = getUid(layer);
-    const liEl = document.createElement('li');
+    const name = layer.get('name') || `${layer.constructor.name} ${uid}`;
+    const liEl = createElement('li', null, { 'data-uid': uid });
     liEl.setAttribute('data-uid', uid);
-    const cbxEl = document.createElement('input');
-    cbxEl.type = 'checkbox';
-    cbxEl.checked = layer.getVisible();
-    liEl.append(cbxEl, layer.get('name'));
+    const cbxEl = createElement('input', {
+      id: `layerList${uid}`,
+      type: 'checkbox',
+      checked: layer.getVisible(),
+    });
+    const lblEl = createElement('label', { innerText: name }, { for: cbxEl.id });
+    liEl.append(cbxEl, lblEl);
     this.container.append(liEl);
     cbxEl.addEventListener('change', () => {
       if (layer.get('basemap'))

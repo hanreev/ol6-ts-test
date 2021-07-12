@@ -8,6 +8,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const destPath = path.resolve('./dist');
 
@@ -26,12 +27,14 @@ module.exports = (env, argv) => {
   const mode =
     (env && env.development) || argv.mode == 'development' ? 'development' : 'production';
 
+  const devMode = mode === 'development';
+
   /** @type {Object<string, *>} */
   const postcssOptions = {
     plugins: [autoprefixer],
   };
 
-  if (mode === 'production')
+  if (!devMode)
     postcssOptions.plugins.push(
       cssnano({
         preset: [
@@ -55,7 +58,7 @@ module.exports = (env, argv) => {
     },
     output: {
       path: destPath,
-      filename: 'assets/[name].js',
+      filename: 'assets/[name].[contenthash].js',
     },
     target: 'web',
     mode,
@@ -85,11 +88,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader],
-        },
-        {
-          test: /\.s[ac]ss$/,
+          test: /\.(sa|sc|c)ss$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader', postcssLoader, 'sass-loader'],
         },
         {
@@ -104,19 +103,22 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
+      new HtmlWebpackPlugin({
+        template: './src/index.html',
+      }),
       new MiniCssExtractPlugin({
-        filename: 'assets/[name].css',
+        filename: 'assets/[name].[contenthash].css',
       }),
-      new CopyPlugin({
-        patterns: [
-          { from: 'src/index.html', to: 'index.html' },
-          // { from: 'src/assets', to: 'assets' },
-        ],
-      }),
-      new webpack.SourceMapDevToolPlugin(),
       new webpack.DefinePlugin({
         'process.env': JSON.stringify(appEnv),
       }),
+      ...(devMode
+        ? [
+            new webpack.SourceMapDevToolPlugin({
+              filename: 'assets/[name][ext].[contenthash].map',
+            }),
+          ]
+        : []),
     ],
     devServer: {
       contentBase: destPath,

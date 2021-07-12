@@ -1,19 +1,34 @@
-import Control, { Options as BaseOptions } from 'ol/control/Control';
+import Control from 'ol/control/Control';
+
+import { createElement } from '../util';
+
+export interface Options {
+  className?: string;
+  target?: string | HTMLElement;
+  label?: string | HTMLElement;
+  tipLabel?: string;
+}
+
+const defaultOptions: Options = {
+  className: 'ol-download',
+  label: createElement('i', { className: 'material-icons', innerText: 'cloud_download' }),
+  tipLabel: 'Download',
+};
 
 export class Download extends Control {
-  constructor(options: BaseOptions = {}) {
-    options.element = document.createElement('div');
-    super(options);
-    this.element.className = 'ol-control ol-unselectable ol-download';
-    const button = document.createElement('button');
-    button.title = 'Download';
-    button.innerHTML = '<i class="material-icons">cloud_download</i>';
+  constructor(options: Options = {}) {
+    options = Object.assign({}, defaultOptions, options);
+    const element = createElement('div', { className: 'ol-control ol-unselectable' });
+    element.classList.add(options.className);
+    super({ element, target: options.target });
+    const button = createElement('button', { title: options.tipLabel });
+    button.append(options.label);
     button.addEventListener('click', () => {
       const map = this.getMap();
       if (!map) return;
       map.once('rendercomplete', () => {
         const size = map.getSize();
-        const dlCanvas = document.createElement('canvas');
+        const dlCanvas = createElement('canvas');
         const dlContext = dlCanvas.getContext('2d');
         dlCanvas.width = size[0];
         dlCanvas.height = size[1];
