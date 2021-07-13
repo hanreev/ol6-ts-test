@@ -31,7 +31,9 @@ const view = new View({
 });
 
 const graticule = new Graticule({
-  name: 'Graticule',
+  properties: {
+    name: 'Graticule',
+  },
   targetSize: 200,
   showLabels: true,
   lonLabelPosition: 0.96,
@@ -40,8 +42,10 @@ const graticule = new Graticule({
 });
 
 const osmLayer = new TileLayer({
-  name: 'OpenSteetMap',
-  basemap: true,
+  properties: {
+    name: 'OpenSteetMap',
+    basemap: true,
+  },
   source: new OSM(),
   zIndex: -1,
 });
@@ -51,8 +55,10 @@ const layers: Layer[] = [graticule, osmLayer];
 for (const key in MapboxType) {
   const type = MapboxType[key] as MapboxType;
   const layer = new TileLayer({
-    name: `Mapbox ${key.replace('_', ' ')}`,
-    basemap: true,
+    properties: {
+      name: `Mapbox ${key.replace('_', ' ')}`,
+      basemap: true,
+    },
     source: new Mapbox({ type }),
     zIndex: -1,
     visible: false,
@@ -116,7 +122,9 @@ map.once('postrender', () => {
 const vectorSource = new VectorSource();
 const vectorStyleCache: { [key: number]: Style } = {};
 const vectorLayer = new Vector({
-  name: 'Random Points',
+  properties: {
+    name: 'Random Points',
+  },
   source: new Cluster({ source: vectorSource, distance: 30 }),
   style: feature => {
     const featureCount: number = feature.get('features').length;

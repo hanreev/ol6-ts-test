@@ -26,7 +26,7 @@ export class Download extends Control {
     button.addEventListener('click', () => {
       const map = this.getMap();
       if (!map) return;
-      map.once('rendercomplete', () => {
+      map.once('postrender', () => {
         const size = map.getSize();
         const dlCanvas = createElement('canvas');
         const dlContext = dlCanvas.getContext('2d');

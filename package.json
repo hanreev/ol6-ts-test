@@ -8,19 +8,18 @@
     "build": "shx rm -rf ./dist && webpack --progress --color",
     "dev": "yarn build --mode=development",
     "watch": "yarn dev --watch",
-    "serve": "webpack serve --progress --color --mode=development --hot --open"
+    "start": "webpack serve --progress --color --mode=development --hot --open"
   },
   "dependencies": {
-    "ol": "^6.5.0"
+    "ol": "^6.6.0"
   },
   "devDependencies": {
-    "@hanreev/types-ol": "^3.5.3",
+    "@hanreev/types-ol": "^3.6.1",
     "@types/node": "^14.0.0",
-    "@types/ol": "file:node_modules/@hanreev/types-ol/ol",
     "@types/webpack": "^5.28.0",
     "@types/webpack-dev-server": "^3.11.4",
-    "@typescript-eslint/eslint-plugin": "^4.28.1",
-    "@typescript-eslint/parser": "^4.28.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
     "autoprefixer": "^10.2.6",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^5.2.6",
