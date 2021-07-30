@@ -124,6 +124,9 @@ module.exports = (env, argv) => {
       contentBase: destPath,
       port: 9000,
       compress: true,
+      watchOptions: {
+        poll: true,
+      },
     },
   };
 };

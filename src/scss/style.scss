@@ -8,7 +8,7 @@ body {
   margin: 0;
   width: 100vw;
   height: 100vh;
-  display: flex;
+  display: block;
   overflow: hidden;
 }
 
@@ -17,7 +17,8 @@ body {
 }
 
 .map {
-  flex: 1 1 auto;
+  width: 100vw;
+  height: 100vh;
   display: block;
 }
 
@@ -26,16 +27,18 @@ body {
 .ol-layer-list {
   top: 0.5rem;
   left: 0.5rem;
-  padding: 0.5rem;
-  background: #ffffff;
 
-  &:hover {
-    background: #ffffff;
+  &:not(.ol-collapsed) {
+    padding: 0.5rem;
+    background-color: #ffffff;
   }
 
-  &.ol-collapsed > button {
-    left: 0;
-    right: unset;
+  &.ol-collapsed {
+    > button {
+      position: static;
+      left: 0;
+      right: unset;
+    }
   }
 
   > button {

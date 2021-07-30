@@ -5,7 +5,7 @@ import Control, { Options as BaseOptions } from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import BaseLayer from 'ol/layer/Base';
 
-import { createElement, sortByZIndex } from '../util';
+import { createElement, sortByZIndex, zoomToLayer } from '../util';
 
 export interface Options extends BaseOptions {
   title?: string | HTMLElement;
@@ -116,15 +116,38 @@ export class LayerList extends Control {
   private _addLayer(layer: BaseLayer) {
     const uid = getUid(layer);
     const name = layer.get('name') || `${layer.constructor.name} ${uid}`;
-    const liEl = createElement('li', null, { 'data-uid': uid });
+    const liEl = createElement('li', null, {
+      'data-uid': uid,
+      style: { display: 'flex', alignItems: 'center' },
+    });
     liEl.setAttribute('data-uid', uid);
     const cbxEl = createElement('input', {
       id: `layerList${uid}`,
       type: 'checkbox',
       checked: layer.getVisible(),
     });
-    const lblEl = createElement('label', { innerText: name }, { for: cbxEl.id });
+    const lblEl = createElement(
+      'label',
+      { innerText: name },
+      { for: cbxEl.id, style: { marginRight: '4px' } },
+    );
     liEl.append(cbxEl, lblEl);
+    if (!(layer.get('basemap') || name == 'Graticule')) {
+      const btnZoomEl = createElement(
+        'button',
+        {
+          type: 'button',
+          title: 'Zoom to layer',
+          innerHTML: '<i class="material-icons">filter_center_focus</i>',
+        },
+        { style: { marginLeft: 'auto' } },
+      );
+      btnZoomEl.addEventListener('click', () => {
+        const view = this.getMap()?.getView();
+        if (view) zoomToLayer(view, layer);
+      });
+      liEl.append(btnZoomEl);
+    }
     this.container.append(liEl);
     cbxEl.addEventListener('change', () => {
       if (layer.get('basemap'))

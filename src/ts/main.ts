@@ -1,19 +1,18 @@
 import '../scss/style.scss';
 
 import { Collection, Feature, Graticule, Map, Overlay, View } from 'ol';
-import { CollectionEvent } from 'ol/Collection';
 import { FeatureLike } from 'ol/Feature';
 import { unByKey } from 'ol/Observable';
 import { FullScreen, MousePosition, OverviewMap, ScaleLine, defaults as defaultControls } from 'ol/control';
 import { Coordinate, toStringXY } from 'ol/coordinate';
 import { Extent } from 'ol/extent';
-import Point from 'ol/geom/Point';
-import { Layer, Tile as TileLayer, Vector } from 'ol/layer';
-import BaseLayer from 'ol/layer/Base';
-import { fromLonLat } from 'ol/proj';
-import { Cluster, OSM } from 'ol/source';
-import VectorSource from 'ol/source/Vector';
+import { MVT } from 'ol/format';
+import { Point } from 'ol/geom';
+import { Layer, Tile as TileLayer, Vector as VectorLayer, VectorTile as VectorTileLayer } from 'ol/layer';
+import { fromLonLat, get as getProjection, transformExtent } from 'ol/proj';
+import { Cluster, OSM, Tile as TileSource, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source';
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
+import { createXYZ } from 'ol/tilegrid';
 
 import { Download } from './control/Download';
 import LayerList from './control/LayerList';
@@ -25,8 +24,11 @@ function createIcon(iconName: string) {
   return createElement('i', { className: 'material-icons', innerText: iconName });
 }
 
+const projection = getProjection('EPSG:900913');
+
 const view = new View({
-  center: fromLonLat([110.367, -7.7829]),
+  projection,
+  center: fromLonLat([110.367, -7.7829], projection),
   zoom: 12,
 });
 
@@ -36,8 +38,6 @@ const graticule = new Graticule({
   },
   targetSize: 200,
   showLabels: true,
-  lonLabelPosition: 0.96,
-  latLabelPosition: 0.99,
   zIndex: Infinity,
 });
 
@@ -47,7 +47,6 @@ const osmLayer = new TileLayer({
     basemap: true,
   },
   source: new OSM(),
-  zIndex: -1,
 });
 
 const layers: Layer[] = [graticule, osmLayer];
@@ -60,20 +59,22 @@ for (const key in MapboxType) {
       basemap: true,
     },
     source: new Mapbox({ type }),
-    zIndex: -1,
     visible: false,
   });
   layers.push(layer);
 }
 
 const overviewMap = new OverviewMap({
+  view: new View({
+    center: view.getCenter(),
+    projection: view.getProjection(),
+  }),
   collapsed: false,
   label: createIcon('chevron_right'),
   collapseLabel: createIcon('chevron_left'),
 });
 
 const map = new Map({
-  target: 'map',
   view,
   layers,
   controls: defaultControls({
@@ -106,9 +107,13 @@ const map = new Map({
   ]),
 });
 
+window.addEventListener('load', () => {
+  map.setTarget('map');
+});
+
 (window as any).map = map;
 
-map.once('postrender', () => {
+map.once('rendercomplete', () => {
   const extent = view.calculateExtent();
   map.addControl(new ZoomToExtent({ extent }));
 });
@@ -121,7 +126,7 @@ map.once('postrender', () => {
 
 const vectorSource = new VectorSource();
 const vectorStyleCache: { [key: number]: Style } = {};
-const vectorLayer = new Vector({
+const vectorLayer = new VectorLayer({
   properties: {
     name: 'Random Points',
   },
@@ -198,7 +203,7 @@ const showFeatureInfo = (features: FeatureLike | FeatureLike[], position: Coordi
   featureInfoOverlay.setPosition(position);
 };
 
-map.once('postrender', () => {
+map.once('rendercomplete', () => {
   generateRandomPoint(view.calculateExtent(), 100).forEach((geometry, i) => {
     vectorSource.addFeature(new Feature({ name: `Feature ${i + 1}`, geometry }));
   });
@@ -221,7 +226,7 @@ map.on('click', e => {
  * ============================================================
  */
 const ovMapLayers = overviewMap.getOverviewMap().getLayers();
-const attachBasemapListener = (layer: TileLayer) => {
+const attachBasemapListener = (layer: TileLayer<TileSource>) => {
   const changeVisibleKey = layer.on('change:visible', () => {
     if (layer.getVisible()) {
       ovMapLayers.clear();
@@ -235,7 +240,7 @@ const basemapCollection = new Collection(
     .getLayers()
     .getArray()
     .filter(l => !!l.get('basemap'))
-    .map((layer: TileLayer) => {
+    .map((layer: TileLayer<TileSource>) => {
       attachBasemapListener(layer);
       return layer;
     }),
@@ -255,13 +260,39 @@ basemapCollection.on('remove', event => {
   layer.unset('changeVisibleKey');
 });
 
-map.getLayers().on(['add', 'remove'], (event: CollectionEvent<BaseLayer>) => {
+map.getLayers().on(['add', 'remove'], event => {
   if (event.element.get('basemap') && event.element instanceof TileLayer) {
     if (event.type === 'add') basemapCollection.push(event.element);
     else basemapCollection.remove(event.element);
   }
 });
+/**
+ * ============================================================
+ */
 
+/**
+ * ============================================================
+ * Geoserver MVT
+ * ============================================================
+ */
+
+const vectorTileLayer = new VectorTileLayer({
+  properties: {
+    name: 'NYC Landmarks',
+  },
+  source: new VectorTileSource({
+    tileGrid: createXYZ({ maxZoom: 23 }),
+    format: new MVT(),
+    url: `https://server1.karomap.com/geoserver/gwc/service/tms/1.0.0/karomap:poly_landmarks@${projection.getCode()}@pbf/{z}/{x}/{-y}.pbf`,
+  }),
+  extent: transformExtent([-74.047185, 40.679648, -73.90782, 40.882078], 'EPSG:4326', projection),
+  style: new Style({
+    fill: new Fill({ color: 'rgba(0,180,240,0.6)' }),
+    stroke: new Stroke({ color: 'rgb(0,140,200)', width: 1, lineCap: 'round', lineJoin: 'bevel' }),
+  }),
+});
+
+map.addLayer(vectorTileLayer);
 /**
  * ============================================================
  */

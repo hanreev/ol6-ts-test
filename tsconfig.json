@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["DOM", "ESNext"],
-    "module": "ES2015",
+    "lib": ["dom", "esnext"],
+    "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
-    "target": "ES2015",
     "paths": {
       "ol": ["node_modules/@hanreev/types-ol/ol"],
       "ol/*": ["node_modules/@hanreev/types-ol/ol/*"]
-    }
+    },
+    "target": "esnext"
   },
   "include": ["src/**/*.ts"]
 }
