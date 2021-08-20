@@ -3,14 +3,31 @@ import '../scss/style.scss';
 import { Collection, Feature, Graticule, Map, Overlay, View } from 'ol';
 import { FeatureLike } from 'ol/Feature';
 import { unByKey } from 'ol/Observable';
-import { FullScreen, MousePosition, OverviewMap, ScaleLine, defaults as defaultControls } from 'ol/control';
+import {
+  FullScreen,
+  MousePosition,
+  OverviewMap,
+  ScaleLine,
+  defaults as defaultControls,
+} from 'ol/control';
 import { Coordinate, toStringXY } from 'ol/coordinate';
 import { Extent } from 'ol/extent';
 import { MVT } from 'ol/format';
 import { Point } from 'ol/geom';
-import { Layer, Tile as TileLayer, Vector as VectorLayer, VectorTile as VectorTileLayer } from 'ol/layer';
+import {
+  Layer,
+  Tile as TileLayer,
+  Vector as VectorLayer,
+  VectorTile as VectorTileLayer,
+} from 'ol/layer';
 import { fromLonLat, get as getProjection, transformExtent } from 'ol/proj';
-import { Cluster, OSM, Tile as TileSource, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source';
+import {
+  Cluster,
+  OSM,
+  Tile as TileSource,
+  Vector as VectorSource,
+  VectorTile as VectorTileSource,
+} from 'ol/source';
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
 import { createXYZ } from 'ol/tilegrid';
 
