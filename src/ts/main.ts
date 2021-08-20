@@ -124,8 +124,8 @@ map.once('rendercomplete', () => {
  * ============================================================
  */
 
+const clusterStyleCache: Record<number, Style> = {};
 const vectorSource = new VectorSource();
-const vectorStyleCache: { [key: number]: Style } = {};
 const vectorLayer = new VectorLayer({
   properties: {
     name: 'Random Points',
@@ -133,7 +133,7 @@ const vectorLayer = new VectorLayer({
   source: new Cluster({ source: vectorSource, distance: 30 }),
   style: feature => {
     const featureCount: number = feature.get('features').length;
-    if (!vectorStyleCache[featureCount]) {
+    if (!clusterStyleCache[featureCount]) {
       let radius = 6;
       let text: Text;
       if (featureCount > 1) {
@@ -144,7 +144,7 @@ const vectorLayer = new VectorLayer({
           fill: new Fill({ color: '#fff' }),
         });
       }
-      vectorStyleCache[featureCount] = new Style({
+      clusterStyleCache[featureCount] = new Style({
         image: new Circle({
           radius,
           fill: new Fill({ color: '#df0000' }),
@@ -153,7 +153,7 @@ const vectorLayer = new VectorLayer({
         text,
       });
     }
-    return vectorStyleCache[featureCount];
+    return clusterStyleCache[featureCount];
   },
 });
 map.addLayer(vectorLayer);

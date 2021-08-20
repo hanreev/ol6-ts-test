@@ -73,6 +73,12 @@ module.exports = (env, argv) => {
     devtool: false,
     resolve: {
       extensions: ['.js', '.ts', '.scss'],
+      fallback: {
+        buffer: false,
+        fs: false,
+        http: false,
+        https: false,
+      },
     },
     optimization: {
       minimizer: [
@@ -121,12 +127,10 @@ module.exports = (env, argv) => {
         : []),
     ],
     devServer: {
-      contentBase: destPath,
+      static: destPath,
       port: 9000,
       compress: true,
-      watchOptions: {
-        poll: true,
-      },
+      liveReload: true,
     },
   };
 };
