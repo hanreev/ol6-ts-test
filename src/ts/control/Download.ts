@@ -34,7 +34,8 @@ export class Download extends Control {
         dlCanvas.height = size[1];
         const canvasEls = map
           .getTargetElement()
-          .querySelectorAll<HTMLCanvasElement>('.ol-layers canvas');
+          .querySelector('.ol-viewport>.ol-layers')
+          .querySelectorAll<HTMLCanvasElement>('.ol-layer>canvas');
         canvasEls.forEach(canvas => {
           if (canvas.width <= 0) return;
           const opacity = canvas.parentElement.style.opacity;
