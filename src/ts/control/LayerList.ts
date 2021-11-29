@@ -87,7 +87,7 @@ export class LayerList extends Control {
 
   setTitle(title: string | HTMLElement) {
     this.set('title', title);
-    const titleEl = typeof title === 'string' ? createElement('h3', { innerText: title }) : title;
+    const titleEl = typeof title === 'string' ? createElement('h4', { innerText: title }) : title;
     this._titleEl.replaceWith(titleEl);
     this._titleEl = titleEl;
     this._toggleEl.title = typeof title === 'string' ? title : title.textContent;

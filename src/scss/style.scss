@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto');
 @import url('https://fonts.googleapis.com/css2?family=Material+Icons');
 
-@import './ol';
-
 body {
   font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -23,6 +21,34 @@ body {
 }
 
 // OpenLayers controls
+
+.ol-scale-line {
+  left: 11rem;
+}
+
+.ol-zoom {
+  top: unset;
+  left: unset;
+  right: 0.5rem;
+  bottom: 5rem;
+}
+
+.ol-rotate {
+  top: unset;
+  bottom: 8.5rem;
+  right: 0.5rem;
+}
+
+.ol-mouse-position {
+  top: unset;
+  position: absolute;
+  right: 8px;
+  bottom: 3rem;
+  background: rgba(#ffffff, 0.8);
+  padding: 2px 4px;
+  font-size: 14px;
+  border-radius: 4px;
+}
 
 .ol-layer-list {
   top: 0.5rem;
@@ -47,8 +73,8 @@ body {
     right: 0;
   }
 
-  > h3 {
-    margin: 0.5rem 0 1rem;
+  > h4 {
+    margin: 0 0 1rem;
   }
 
   > ul {
@@ -61,4 +87,10 @@ body {
 .ol-download {
   right: 0.5rem;
   top: 2.5rem;
+}
+
+.ol-zoom-extent {
+  left: unset;
+  top: 4.5rem;
+  right: 0.5rem;
 }

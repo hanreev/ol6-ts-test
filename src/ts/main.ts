@@ -1,3 +1,4 @@
+import 'ol/ol.css';
 import '../scss/style.scss';
 
 import { Collection, Feature, Graticule, Map, Overlay, View } from 'ol';
