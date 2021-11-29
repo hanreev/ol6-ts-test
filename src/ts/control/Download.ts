@@ -48,9 +48,9 @@ export class Download extends Control {
           dlContext.drawImage(canvas, 0, 0);
         });
 
-        if (navigator.msSaveBlob) {
+        if ((navigator as any).msSaveBlob) {
           // link download attribuute does not work on MS browsers
-          navigator.msSaveBlob((dlCanvas as any).msToBlob(), 'map.png');
+          (navigator as any).msSaveBlob((dlCanvas as any).msToBlob(), 'map.png');
         } else {
           const link = document.createElement('a');
           link.download = 'map.png';

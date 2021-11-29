@@ -1,6 +1,7 @@
 import '../scss/style.scss';
 
 import { Collection, Feature, Graticule, Map, Overlay, View } from 'ol';
+import { CollectionEvent } from 'ol/Collection';
 import { FeatureLike } from 'ol/Feature';
 import { unByKey } from 'ol/Observable';
 import {
@@ -13,7 +14,7 @@ import {
 import { Coordinate, toStringXY } from 'ol/coordinate';
 import { Extent } from 'ol/extent';
 import { MVT } from 'ol/format';
-import { Point } from 'ol/geom';
+import { Geometry, Point } from 'ol/geom';
 import {
   Layer,
   Tile as TileLayer,
@@ -66,7 +67,7 @@ const osmLayer = new TileLayer({
   source: new OSM(),
 });
 
-const layers: Layer[] = [graticule, osmLayer];
+const layers: Layer<VectorSource<Geometry> | TileSource>[] = [graticule, osmLayer];
 
 for (const key in MapboxType) {
   const type = MapboxType[key] as MapboxType;
@@ -277,7 +278,7 @@ basemapCollection.on('remove', event => {
   layer.unset('changeVisibleKey');
 });
 
-map.getLayers().on(['add', 'remove'], event => {
+map.getLayers().on(['add', 'remove'], (event: CollectionEvent) => {
   if (event.element.get('basemap') && event.element instanceof TileLayer) {
     if (event.type === 'add') basemapCollection.push(event.element);
     else basemapCollection.remove(event.element);

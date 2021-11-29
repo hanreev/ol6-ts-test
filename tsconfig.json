@@ -5,10 +5,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
-    "paths": {
-      "ol": ["node_modules/@hanreev/types-ol/ol"],
-      "ol/*": ["node_modules/@hanreev/types-ol/ol/*"]
-    },
     "target": "esnext"
   },
   "include": ["src/**/*.ts"]

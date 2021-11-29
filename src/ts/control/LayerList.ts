@@ -79,12 +79,10 @@ export class LayerList extends Control {
       .forEach(this._addLayer.bind(this));
 
     const uid = getUid(this);
-    this._eventKeys[uid] = map
-      .getLayers()
-      .on(['add', 'remove'], (e: CollectionEvent<BaseLayer>) => {
-        if (e.type === 'add') this._addLayer(e.element);
-        else this._removeLayer(e.element);
-      });
+    this._eventKeys[uid] = map.getLayers().on(['add', 'remove'], (e: CollectionEvent) => {
+      if (e.type === 'add') this._addLayer(e.element);
+      else this._removeLayer(e.element);
+    });
   }
 
   setTitle(title: string | HTMLElement) {

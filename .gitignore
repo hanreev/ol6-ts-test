@@ -6,3 +6,6 @@ yarn-error.log
 /.vscode
 
 .env.local
+
+.DS_Store
+Thumbs.db
