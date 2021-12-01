@@ -33,7 +33,7 @@ import {
 import { Circle, Fill, Stroke, Style, Text } from 'ol/style';
 import { createXYZ } from 'ol/tilegrid';
 
-import { Download } from './control/Download';
+import Download from './control/Download';
 import LayerList from './control/LayerList';
 import ZoomToExtent from './control/ZoomToExtent';
 import Mapbox, { MapboxType } from './source/Mapbox';
@@ -58,6 +58,8 @@ const graticule = new Graticule({
   targetSize: 200,
   showLabels: true,
   zIndex: Infinity,
+  lonLabelPosition: 0.005,
+  latLabelPosition: 0.995,
 });
 
 const osmLayer = new TileLayer({
@@ -178,15 +180,9 @@ const vectorLayer = new VectorLayer({
 map.addLayer(vectorLayer);
 
 const featureInfoOverlay = new Overlay({
-  element: createElement('div', null, {
-    style: {
-      background: '#fff',
-      borderRadius: '4px',
-      padding: '4px 8px',
-      boxShadow: '2px 2px 8px rgba(0,0,0,.6)',
-    },
-  }),
+  element: createElement('div', { className: 'feature-info-container' }),
   className: 'feature-info',
+  offset: [-20, 10],
 });
 featureInfoOverlay.setMap(map);
 
@@ -204,7 +200,7 @@ const generateRandomPoint = (extent: Extent, count: number) => {
 const showFeatureInfo = (features: FeatureLike | FeatureLike[], position: Coordinate) => {
   if (!Array.isArray(features)) features = [features];
   featureInfoOverlay.getElement().innerHTML = '';
-  const tbl = createElement('table', null, { style: { width: '100%' } });
+  const tbl = createElement('table');
   features.forEach((feature, i, arr) => {
     const props = feature.getProperties();
     for (const k in props) {

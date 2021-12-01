@@ -130,7 +130,7 @@ module.exports = (env, argv) => {
       static: destPath,
       port: 9000,
       compress: true,
-      liveReload: true,
+      watchFiles: ['src/**/*'],
     },
   };
 };

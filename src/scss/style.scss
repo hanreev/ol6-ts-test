@@ -20,6 +20,25 @@ body {
   display: block;
 }
 
+.feature-info {
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #ffffff;
+  }
+}
+
+.feature-info-container {
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 4px 8px;
+  box-shadow: rgba(#000000, 0.6) 2px 2px 8px;
+}
+
 // OpenLayers controls
 
 .ol-scale-line {
@@ -93,4 +112,14 @@ body {
   left: unset;
   top: 4.5rem;
   right: 0.5rem;
+
+  button {
+    line-height: 1;
+  }
+}
+
+.ol-attribution.ol-uncollapsible {
+  bottom: 0.5rem;
+  right: 0.5rem;
+  min-height: 24px;
 }

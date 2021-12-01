@@ -15,7 +15,7 @@ const defaultOptions: Options = {
   tipLabel: 'Download',
 };
 
-export class Download extends Control {
+export default class Download extends Control {
   constructor(options: Options = {}) {
     options = Object.assign({}, defaultOptions, options);
     const element = createElement('div', { className: 'ol-control ol-unselectable' });
