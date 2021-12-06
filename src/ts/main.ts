@@ -62,28 +62,32 @@ const graticule = new Graticule({
   latLabelPosition: 0.995,
 });
 
+const mapboxEnabled = !!process.env.MAPBOX_ACCESS_TOKEN;
+
 const osmLayer = new TileLayer({
   properties: {
     name: 'OpenSteetMap',
     basemap: true,
   },
   source: new OSM(),
+  visible: !mapboxEnabled,
 });
 
 const layers: Layer<VectorSource<Geometry> | TileSource>[] = [graticule, osmLayer];
 
-for (const key in MapboxType) {
-  const type = MapboxType[key] as MapboxType;
-  const layer = new TileLayer({
-    properties: {
-      name: `Mapbox ${key.replace('_', ' ')}`,
-      basemap: true,
-    },
-    source: new Mapbox({ type }),
-    visible: false,
-  });
-  layers.push(layer);
-}
+if (mapboxEnabled)
+  for (const key in MapboxType) {
+    const type = MapboxType[key] as MapboxType;
+    const layer = new TileLayer({
+      properties: {
+        name: `Mapbox ${key.replace('_', ' ')}`,
+        basemap: true,
+      },
+      source: new Mapbox({ type }),
+      visible: type === MapboxType.Streets,
+    });
+    layers.push(layer);
+  }
 
 const overviewMap = new OverviewMap({
   view: new View({
@@ -136,7 +140,7 @@ window.addEventListener('load', () => {
 
 map.once('rendercomplete', () => {
   const extent = view.calculateExtent();
-  map.addControl(new ZoomToExtent({ extent }));
+  map.addControl(new ZoomToExtent({ extent, padding: [16, 16, 16, 16] }));
 });
 
 /**
@@ -222,6 +226,7 @@ map.once('rendercomplete', () => {
   generateRandomPoint(view.calculateExtent(), 100).forEach((geometry, i) => {
     vectorSource.addFeature(new Feature({ name: `Feature ${i + 1}`, geometry }));
   });
+  view.fit(view.calculateExtent(), { padding: [16, 16, 16, 16] });
 });
 
 map.on('click', e => {
@@ -291,6 +296,8 @@ map.getLayers().on(['add', 'remove'], (event: CollectionEvent) => {
  * ============================================================
  */
 
+const geoserverUrl = process.env.GEOSERVER_URL;
+const projectionCode = projection.getCode();
 const vectorTileLayer = new VectorTileLayer({
   properties: {
     name: 'NYC Landmarks',
@@ -298,7 +305,7 @@ const vectorTileLayer = new VectorTileLayer({
   source: new VectorTileSource({
     tileGrid: createXYZ({ maxZoom: 23 }),
     format: new MVT(),
-    url: `https://server1.karomap.com/geoserver/gwc/service/tms/1.0.0/karomap:poly_landmarks@${projection.getCode()}@pbf/{z}/{x}/{-y}.pbf`,
+    url: `${geoserverUrl}/gwc/service/tms/1.0.0/karomap:poly_landmarks@${projectionCode}@pbf/{z}/{x}/{-y}.pbf`,
   }),
   extent: transformExtent([-74.047185, 40.679648, -73.90782, 40.882078], 'EPSG:4326', projection),
   style: new Style({
@@ -306,7 +313,6 @@ const vectorTileLayer = new VectorTileLayer({
     stroke: new Stroke({ color: 'rgb(0,140,200)', width: 1, lineCap: 'round', lineJoin: 'bevel' }),
   }),
 });
-
 map.addLayer(vectorTileLayer);
 /**
  * ============================================================

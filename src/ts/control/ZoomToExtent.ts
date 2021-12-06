@@ -3,6 +3,8 @@ import { Extent, createEmpty as createEmptyExtent } from 'ol/extent';
 
 import { createElement } from '../util';
 
+export type Padding = [number, number, number, number];
+
 export interface Options {
   className?: string;
   target?: HTMLElement | string;
@@ -10,6 +12,7 @@ export interface Options {
   tipLabel?: string;
   extent?: Extent;
   animationDuration?: number;
+  padding?: Padding;
 }
 
 const defaultOptions: Options = {
@@ -27,6 +30,7 @@ export default class ZoomToExtent extends Control {
     super({ element, target: options.target });
     this.setExtent(options.extent);
     this.setAnimationDuration(options.animationDuration);
+    this.setPadding(options.padding);
     const button = createElement('button', { title: options.tipLabel });
     button.append(options.label);
     button.addEventListener('click', () => {
@@ -36,7 +40,9 @@ export default class ZoomToExtent extends Control {
   }
 
   protected handleZoomToExtent() {
-    this.getMap()?.getView().fit(this.getExtent(), { duration: this.getAnimationDuration() });
+    this.getMap()
+      ?.getView()
+      .fit(this.getExtent(), { duration: this.getAnimationDuration(), padding: this.getPadding() });
   }
 
   setExtent(extent: Extent) {
@@ -53,5 +59,13 @@ export default class ZoomToExtent extends Control {
 
   getAnimationDuration(): number {
     return this.get('duration') || 0;
+  }
+
+  setPadding(padding?: Padding) {
+    this.set('padding', padding);
+  }
+
+  getPadding(): Padding {
+    return this.get('padding');
   }
 }
