@@ -24,7 +24,7 @@ const defaultOptions: Options = {
 
 export default class ZoomToExtent extends Control {
   constructor(options: Options = {}) {
-    options = Object.assign({}, defaultOptions, options);
+    options = { ...defaultOptions, ...options };
     const element = createElement('div', { className: 'ol-control ol-unselectable' });
     element.classList.add(options.className);
     super({ element, target: options.target });

@@ -41,7 +41,8 @@ body {
 
 // OpenLayers controls
 
-.ol-scale-line {
+.ol-scale-line,
+.ol-scale-bar {
   left: 11rem;
 }
 
@@ -49,19 +50,17 @@ body {
   top: unset;
   left: unset;
   right: 0.5rem;
-  bottom: 5rem;
+  bottom: 3rem;
 }
 
 .ol-rotate {
   top: unset;
-  bottom: 8.5rem;
+  bottom: 6.5rem;
   right: 0.5rem;
 }
 
 .ol-mouse-position {
-  top: unset;
-  right: 8px;
-  bottom: 3rem;
+  right: 3rem;
   background: rgba(#ffffff, 0.8);
   padding: 2px 4px;
   font-size: 0.8rem;

@@ -1,5 +1,4 @@
-import { PluggableMap, getUid } from 'ol';
-import { CollectionEvent } from 'ol/Collection';
+import { Graticule, PluggableMap, getUid } from 'ol';
 import { unByKey } from 'ol/Observable';
 import Control, { Options as BaseOptions } from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
@@ -39,7 +38,7 @@ export class LayerList extends Control {
   }
 
   constructor(options: Options = {}) {
-    options = Object.assign({}, defaultOptions, options);
+    options = { ...defaultOptions, ...options };
     options.element = options.element || createElement('div');
     if (!options.collapsible) options.collapsed = false;
     super(options);
@@ -76,10 +75,10 @@ export class LayerList extends Control {
     this._layers
       .filter(layer => !!layer.get('name'))
       .sort(sortByZIndex)
-      .forEach(this._addLayer.bind(this));
+      .forEach(layer => this._addLayer(layer));
 
     const uid = getUid(this);
-    this._eventKeys[uid] = map.getLayers().on(['add', 'remove'], (e: CollectionEvent) => {
+    this._eventKeys[uid] = map.getLayers().on(['add', 'remove'], e => {
       if (e.type === 'add') this._addLayer(e.element);
       else this._removeLayer(e.element);
     });
@@ -127,10 +126,10 @@ export class LayerList extends Control {
     const lblEl = createElement(
       'label',
       { innerText: name },
-      { for: cbxEl.id, style: { marginRight: '4px' } },
+      { for: cbxEl.id, style: { marginRight: '8px' } },
     );
     liEl.append(cbxEl, lblEl);
-    if (!(layer.get('basemap') || name == 'Graticule')) {
+    if (!(layer.get('basemap') || layer instanceof Graticule)) {
       const btnZoomEl = createElement(
         'button',
         {

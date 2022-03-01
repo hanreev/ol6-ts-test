@@ -2,7 +2,6 @@ import 'ol/ol.css';
 import '../scss/style.scss';
 
 import { Collection, Feature, Graticule, Map, Overlay, View } from 'ol';
-import { CollectionEvent } from 'ol/Collection';
 import { FeatureLike } from 'ol/Feature';
 import { unByKey } from 'ol/Observable';
 import {
@@ -43,7 +42,7 @@ function createIcon(iconName: string) {
   return createElement('i', { className: 'material-icons', innerText: iconName });
 }
 
-const projection = getProjection('EPSG:900913');
+const projection = getProjection('EPSG:3857');
 
 const view = new View({
   projection,
@@ -125,7 +124,11 @@ const map = new Map({
       coordinateFormat: coord => toStringXY(coord, 8),
       projection: 'EPSG:4326',
     }),
-    new ScaleLine(),
+    new ScaleLine({
+      bar: true,
+      steps: 2,
+      minWidth: 100,
+    }),
     new LayerList(),
     new Download(),
     overviewMap,
@@ -280,7 +283,7 @@ basemapCollection.on('remove', event => {
   layer.unset('changeVisibleKey');
 });
 
-map.getLayers().on(['add', 'remove'], (event: CollectionEvent) => {
+map.getLayers().on(['add', 'remove'], event => {
   if (event.element.get('basemap') && event.element instanceof TileLayer) {
     if (event.type === 'add') basemapCollection.push(event.element);
     else basemapCollection.remove(event.element);

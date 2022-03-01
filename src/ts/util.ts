@@ -30,7 +30,11 @@ export function degreeToRadian(num: number) {
   return (num * Math.PI) / 180;
 }
 
-export function sortByZIndex(a: BaseLayer, b: BaseLayer, descending = false) {
+export interface HasZIndex {
+  getZIndex(): number;
+}
+
+export function sortByZIndex(a: HasZIndex, b: HasZIndex, descending = false) {
   const aZ = a.getZIndex() || 0;
   const bZ = b.getZIndex() || 0;
   if (descending) return aZ > bZ ? -1 : aZ < bZ ? 1 : 0;

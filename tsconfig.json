@@ -5,7 +5,11 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
-    "target": "esnext"
+    "target": "es5",
+    "paths": {
+      "ol": ["./node_modules/@hanreev/types-ol/ol"],
+      "ol/*": ["./node_modules/@hanreev/types-ol/ol/*"]
+    }
   },
   "include": ["src/**/*.ts"]
 }

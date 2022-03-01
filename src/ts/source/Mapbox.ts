@@ -29,8 +29,7 @@ const defaultOptions: Options = {
 
 export default class Mapbox extends XYZ {
   constructor(options: Options = {}) {
-    options = Object.assign({}, defaultOptions, options);
-    options.tileSize = 512;
+    options = { ...defaultOptions, ...options, tileSize: 512 };
     super(options);
     this.setType(options.type || MapboxType.Streets);
   }
